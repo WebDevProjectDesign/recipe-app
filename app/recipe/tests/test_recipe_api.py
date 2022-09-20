@@ -1,7 +1,6 @@
 """test for recipes api"""
 
 from decimal import Decimal
-import json
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -244,7 +243,7 @@ class PrivateRecipeAPITests(TestCase):
         res = self.client.patch(url, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        new_tag = Tag.objects.create(user=self.user, name='Lunch')
+        new_tag = Tag.objects.get(user=self.user, name='Lunch')
         self.assertIn(new_tag, recipe.tags.all())
 
     def test_update_recipe_assign_tag(self):
