@@ -6,6 +6,10 @@ from django.contrib.auth import get_user_model
 from core import models
 
 
+def create_user(email='user@example.com', password='pass123'):
+    return get_user_model().object.create_user(email, password)
+
+
 class ModelTests(TestCase):
     def text_create_user_with_email_successfull(self):
         email = 'test@example.com'
@@ -55,3 +59,9 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(recipe), recipe.title)
+
+    def test_create_tag(self):
+        user = create_user()
+        tag = models.Tag.objects.create(user=user, name='Tag1')
+
+        self.assertEqual(str(tag), tag.name)
