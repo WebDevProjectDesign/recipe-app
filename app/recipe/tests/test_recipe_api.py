@@ -11,11 +11,13 @@ from rest_framework.test import APIClient
 from core.models import Recipe
 
 from recipe.serializers import RecipeSerializer
+from random import random
 
 RECIPES_URL = reverse('recipe:recipe-list')
 
 
 def create_recipe(user, **params):
+    """create end return sample recipe"""
     defaults = {
         'title': 'Sample recipe title',
         'time_minutes': 22,
@@ -48,14 +50,15 @@ class PrivateRecipeAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().object.create_user(
-            'user@example.com',
-            'testpass123',
+            email='user@radzik.com',
+            password='qwe123',
         )
-
         self.client.force_authenticate(self.user)
 
-    def test_retriece_recipes(self):
+    def test_retrieve_recipes(self):
         """Test retrieving a list of recipes"""
+        create_recipe(user=self.user)
+        create_recipe(user=self.user)
         create_recipe(user=self.user)
         create_recipe(user=self.user)
 
@@ -66,15 +69,15 @@ class PrivateRecipeAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_recipe_list_limited_tu_user(self):
+    def test_recipe_list_limited_to_user(self):
         """test list of recipes is limited to authenticated user"""
         other_user = get_user_model().object.create_user(
-            'other@example.com',
-            'password123',
+            'ass@example.com',
+            'password1234',
         )
 
-        create_recipe(user=other_user)
         create_recipe(user=self.user)
+        create_recipe(user=other_user)
 
         res = self.client.get(RECIPES_URL)
 
