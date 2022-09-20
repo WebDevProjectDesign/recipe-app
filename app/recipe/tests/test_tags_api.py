@@ -19,7 +19,7 @@ def create_user(email='user@example.com', password='pass123'):
 
 
 def details_url(tag_id):
-    return reverse('recipe:tag-details', args=[tag_id])
+    return reverse('recipe:tag-detail', args=[tag_id])
 
 
 class PublicTagsApiTests(TestCase):
@@ -80,3 +80,14 @@ class PrivateTagsApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         tag.refresh_from_db()
         self.assertEqual(tag.name, payload['name'])
+
+    def test_delete_tag(self):
+        """testing deleting tag"""
+        tag = Tag.objects.create(user=self.user, name='Breakfest')
+
+        url = details_url(tag.id)
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        tags = Tag.objects.filter(user=self.user)
+        self.assertFalse(tags.exists())
