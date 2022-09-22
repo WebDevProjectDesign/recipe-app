@@ -6,7 +6,7 @@ services:
       context: .
     restart: always
     volumes:
-    - static-data:/vol/web
+      - static-data:/vol/web
     environment:
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
@@ -31,7 +31,7 @@ services:
       context: ./proxy
     restart: always
     depends_on:
-    - app
+      - app
     ports:
       - 8000:8000
     volumes:
